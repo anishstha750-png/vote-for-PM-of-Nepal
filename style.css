@@ -1,0 +1,100 @@
+/* Reset & Better Box Model */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #d31027, #ea384d);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 15px;
+}
+
+/* Responsive Container */
+.container {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    text-align: center;
+}
+
+/* Heading */
+h1 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #d31027;
+}
+
+/* Candidate Section */
+.candidate {
+    margin: 15px 0;
+}
+
+/* Mobile Friendly Buttons */
+button {
+    padding: 14px;
+    font-size: 16px;
+    width: 100%;
+    border: none;
+    background-color: #d31027;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    background-color: #a10c1f;
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+button:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+}
+
+/* Results Section */
+.results {
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+#message {
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+/* 📱 Extra Small Devices */
+@media (max-width: 480px) {
+
+    .container {
+        padding: 18px;
+        border-radius: 12px;
+    }
+
+    h1 {
+        font-size: 18px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .results {
+        font-size: 14px;
+    }
+}
