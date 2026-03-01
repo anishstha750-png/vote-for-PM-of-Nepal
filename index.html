@@ -95,7 +95,7 @@ button:disabled { background-color: grey; cursor: not-allowed; }
     margin-top:10px;
     overflow:hidden;
     display:none;
-    background :white;
+    background: white;
 }
 
 .vote-fill {
@@ -190,44 +190,55 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const votesRef = ref(db, "votes");
 
-function showBars(){ document.querySelectorAll(".vote-box").forEach(b=>b.style.display="block"); }
-function disableButtons(){ document.querySelectorAll("button").forEach(b=>b.disabled=true); }
+function showBars(){ document.querySelectorAll(".vote-box").forEach(b => b.style.display = "block"); }
+function disableButtons(){ document.querySelectorAll("button").forEach(b => b.disabled = true); }
 
 function updateBars(votes){
     const total = (votes.balen||0)+(votes.harka||0)+(votes.oli||0)+(votes.gagan||0);
-    function barUpdate(id,count,color){
-        const perc = total?Math.round(count/total*100):0;
-        const bar=document.getElementById(id);
-        bar.style.width=perc+"%";
-        bar.style.background=color;
-        bar.innerText=count+" ("+perc+"%)";
+    function barUpdate(id, count, color){
+        const perc = total ? Math.round(count / total * 100) : 0;
+        const bar = document.getElementById(id);
+        bar.style.width = perc + "%";
+        bar.style.background = color;
+        bar.innerText = count + " (" + perc + "%)";
     }
-    barUpdate("balenBar",votes.balen||0,"linear-gradient(to right,#3b82f6,#60a5fa)");
-    barUpdate("harkaBar",votes.harka||0,"linear-gradient(to right,#000000,#434343)");
-    barUpdate("oliBar",votes.oli||0,"linear-gradient(to right,#6b7280,#9ca3af)");
-    barUpdate("gaganBar",votes.gagan||0,"linear-gradient(to right,#22c55e,#4ade80)");
-    document.getElementById("totalVotes").innerText="Total Votes: "+total;
+    barUpdate("balenBar", votes.balen || 0, "linear-gradient(to right,#3b82f6,#60a5fa)");
+    barUpdate("harkaBar", votes.harka || 0, "linear-gradient(to right,#000000,#434343)");
+    barUpdate("oliBar", votes.oli || 0, "linear-gradient(to right,#ef4444,#f87171)"); // KP Oli red bar
+    barUpdate("gaganBar", votes.gagan || 0, "linear-gradient(to right,#22c55e,#4ade80)");
+    
+    document.getElementById("totalVotes").innerText = "Total Votes: " + total;
     showBars();
 }
 
-onValue(votesRef,snapshot=>{
-    if(!snapshot.exists()){ set(votesRef,{balen:0,harka:0,oli:0,gagan:0}); }
-    updateBars(snapshot.val()||{balen:0,harka:0,oli:0,gagan:0});
+// Load initial votes
+onValue(votesRef, snapshot => {
+    if(!snapshot.exists()){ set(votesRef, {balen:0, harka:0, oli:0, gagan:0}); }
+    updateBars(snapshot.val() || {balen:0, harka:0, oli:0, gagan:0});
 });
 
-window.vote=function(candidate){
+// Voting
+window.vote = function(candidate){
     if(localStorage.getItem("voted")){
-        document.getElementById("message").innerText="You have already voted!";
+        document.getElementById("message").innerText = "You have already voted!";
         return;
     }
-    runTransaction(ref(db,'votes/'+candidate),current=>(current||0)+1);
-    localStorage.setItem("voted","true");
-    document.getElementById("message").innerText="Thank you for voting!";
-    document.getElementById(candidate+"Song").play();
+    runTransaction(ref(db, 'votes/' + candidate), current => (current || 0) + 1)
+        .then(() => {
+            localStorage.setItem("voted","true");
+            document.getElementById("message").innerText = "Thank you for voting!";
+            document.getElementById(candidate + "Song").play();
+            // Update bars immediately
+            onValue(votesRef, snapshot => {
+                updateBars(snapshot.val() || {balen:0, harka:0, oli:0, gagan:0});
+            }, { onlyOnce: true });
+        });
     disableButtons();
 }
 
+// Disable buttons if already voted
 if(localStorage.getItem("voted")){ disableButtons(); }
+
 </script>
 
 </body>
