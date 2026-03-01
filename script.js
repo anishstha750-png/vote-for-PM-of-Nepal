@@ -12,9 +12,15 @@ if (!localStorage.getItem("votes")) {
 // Display votes with animated bars
 function displayVotes() {
     const votes = JSON.parse(localStorage.getItem("votes"));
-    const total = votes.balen + votes.harka + votes.oli + votes.gagan;
 
-    // Helper to update bar width & text
+    // Ensure all vote counts are numbers
+    const balen = Number(votes.balen);
+    const harka = Number(votes.harka);
+    const oli = Number(votes.oli);
+    const gagan = Number(votes.gagan);
+
+    const total = balen + harka + oli + gagan;
+
     function updateBar(id, count, color) {
         const percentage = total ? Math.round((count / total) * 100) : 0;
         const bar = document.getElementById(id);
@@ -23,10 +29,10 @@ function displayVotes() {
         bar.innerText = count + " (" + percentage + "%)";
     }
 
-    updateBar("balenBar", votes.balen, "linear-gradient(to right, #3b82f6, #60a5fa)");
-    updateBar("harkaBar", votes.harka, "linear-gradient(to right, #000000, #434343)");
-    updateBar("oliBar", votes.oli, "linear-gradient(to right, #ef4444, #f87171)");
-    updateBar("gaganBar", votes.gagan, "linear-gradient(to right, #22c55e, #4ade80)");
+    updateBar("balenBar", balen, "linear-gradient(to right, #3b82f6, #60a5fa)");
+    updateBar("harkaBar", harka, "linear-gradient(to right, #000000, #434343)");
+    updateBar("oliBar", oli, "linear-gradient(to right, #ef4444, #f87171)");
+    updateBar("gaganBar", gagan, "linear-gradient(to right, #22c55e, #4ade80)");
 }
 
 displayVotes();
@@ -40,7 +46,7 @@ function vote(candidate) {
     }
 
     let votes = JSON.parse(localStorage.getItem("votes"));
-    votes[candidate]++;
+    votes[candidate] = Number(votes[candidate]) + 1; // Ensure numeric increment
     localStorage.setItem("votes", JSON.stringify(votes));
     localStorage.setItem("voted", "true");
 
