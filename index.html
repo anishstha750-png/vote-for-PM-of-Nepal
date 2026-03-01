@@ -133,9 +133,8 @@ button:disabled {
 <audio id="gaganSong" src="gagan.mp3"></audio>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, runTransaction, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAJAs6fWzzH9V-GiTsC0JKczn6qDU4vaeY",
@@ -152,6 +151,14 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const votesRef = ref(db, "votes");
 
+// Initialize votes if not exist
+onValue(votesRef, (snapshot) => {
+    if (!snapshot.exists()) {
+        set(votesRef, {balen:0, harka:0, oli:0, gagan:0});
+    }
+    updateBars(snapshot.val() || {balen:0, harka:0, oli:0, gagan:0});
+});
+
 function showBars() {
     const boxes = document.querySelectorAll('.vote-box');
     boxes.forEach(box => box.style.display = 'block');
@@ -161,11 +168,6 @@ function disableButtons() {
     const buttons = document.querySelectorAll("button");
     buttons.forEach(button => button.disabled = true);
 }
-
-onValue(votesRef, (snapshot) => {
-    const votes = snapshot.val() || {balen:0, harka:0, oli:0, gagan:0};
-    updateBars(votes);
-});
 
 function updateBars(votes) {
     const total = (votes.balen||0) + (votes.harka||0) + (votes.oli||0) + (votes.gagan||0);
@@ -184,13 +186,12 @@ function updateBars(votes) {
 
     document.getElementById("totalVotes").innerText = "Total Votes: " + total;
 
-    if(total > 0){
+    if(total >= 0){
         showBars();
     }
 }
 
 window.vote = function(candidate) {
-
     if(localStorage.getItem("voted")){
         alert("You have already voted!");
         return;
@@ -201,17 +202,16 @@ window.vote = function(candidate) {
     });
 
     localStorage.setItem("voted","true");
-
     alert("Thank you for voting!");
     document.getElementById(candidate+"Song").play();
 
     disableButtons();
 }
 
+// Disable buttons if already voted
 if(localStorage.getItem("voted")){
     disableButtons();
 }
-
 </script>
 
 </body>
