@@ -6,79 +6,123 @@
 <title>Nepal PM Voting</title>
 
 <style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
 body {
     font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    background: url("bg.jpg") no-repeat center center/cover;
-    background-size: cover;
+    background: linear-gradient(135deg, rgb(130, 237, 176), rgb(99, 186, 171));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 15px;
 }
 
 .container {
-    background: rgba(255,255,255,0.95);
-    width: 500px;
-    margin: 50px auto;
+    background: rgba(137, 179, 199, 0.95);
+    width: 100%;
+    max-width: 500px;
     padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(159, 129, 129, 0.25);
+    text-align: center;
+    position: relative;
 }
 
-.candidate {
-    margin: 25px 0;
+/* Header container */
+.header-container {
+    margin-bottom: 25px;
 }
+
+.header-container h1 {
+    font-size: 24px;
+    color: #151515;
+    margin-bottom: 10px;
+}
+
+.header-container #totalVotes {
+    font-weight: bold;
+    font-size: 16px;
+    color: #111;
+}
+
+/* Candidate section */
+.candidate {
+    margin:18px 0;
+    padding:15px;
+    border-radius:15px;
+    background: linear-gradient(145deg, #f7f7f7, #e2e2e2);
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+}
+
+.candidate:hover { transform:translateY(-5px); box-shadow:5px 10px 25px rgba(0,0,0,0.25); }
 
 .candidate img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 5px;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-bottom:10px;
+    border:3px solid #6b7280; /* Gray circle */
+    transition: transform 0.3s ease;
 }
+
+.candidate img:hover { transform:scale(1.05); }
 
 button {
-    padding: 8px 18px;
-    border: none;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 5px;
-    background-color: #d31027;
+    padding:14px;
+    font-size:16px;
+    width:100%;
+    border:none;
+    background: linear-gradient(135deg, grey, grey);
+    color:white;
+    border-radius:10px;
+    cursor:pointer;
+    transition: transform 0.2s, background 0.3s;
+    font-weight:600;
 }
 
-button:hover {
-    background-color: #a10c1f;
-}
-
-button:disabled {
-    background-color: grey;
-    cursor: not-allowed;
-}
+button:hover { background: linear-gradient(135deg, grey, grey); }
+button:active { transform: scale(0.97); }
+button:disabled { background-color: grey; cursor: not-allowed; }
 
 .vote-box {
-    width: 100%;
-    height: 30px;
-    border-radius: 5px;
-    margin-top: 5px;
-    position: relative;
-    overflow: hidden;
-    display: none;
+    width:100%;
+    height:28px;
+    border-radius:10px;
+    margin-top:10px;
+    overflow:hidden;
+    display:none;
+    background :white;
 }
 
 .vote-fill {
-    height: 100%;
-    width: 0%;
-    text-align: center;
-    color: white;
-    font-weight: bold;
-    line-height: 30px;
-    transition: width 0.7s;
+    height:100%;
+    width:0%;
+    text-align:center;
+    color:white;
+    font-weight:bold;
+    line-height:28px;
+    transition: width 1s ease-in-out;
+    border-radius:10px;
 }
 
-#totalVotes {
-    margin-top: 20px;
-    font-weight: bold;
-    font-size: 18px;
+#message {
+    margin-top:15px;
+    font-weight:bold;
+    font-size:16px;
+    color:#111;
+}
+
+/* Mobile Friendly */
+@media (max-width:480px){
+    .container{padding:20px;border-radius:15px;}
+    h1{font-size:20px;}
+    button{font-size:14px; padding:12px;}
+    .candidate img{width:100px;height:100px;}
+    #totalVotes{font-size:14px;}
 }
 </style>
 </head>
@@ -86,45 +130,40 @@ button:disabled {
 <body>
 
 <div class="container">
-    <h1>Vote for Next PM of Nepal</h1>
+    <div class="header-container">
+        <h1>Vote for Next PM of Nepal</h1>
+        <div id="totalVotes">Total Votes: 0</div>
+    </div>
 
     <div class="candidate">
         <img src="balen.jpg" alt="Balen Shah">
         <br>
         <button onclick="vote('balen')">Vote Balen Shah</button>
-        <div class="vote-box">
-            <div id="balenBar" class="vote-fill" style="background-color:blue;">0 (0%)</div>
-        </div>
+        <div class="vote-box"><div id="balenBar" class="vote-fill"></div></div>
     </div>
 
     <div class="candidate">
         <img src="harka.jpg" alt="Harka Sampang">
         <br>
         <button onclick="vote('harka')">Vote Harka Sampang</button>
-        <div class="vote-box">
-            <div id="harkaBar" class="vote-fill" style="background-color:black;">0 (0%)</div>
-        </div>
+        <div class="vote-box"><div id="harkaBar" class="vote-fill"></div></div>
     </div>
 
     <div class="candidate">
         <img src="oli.jpg" alt="KP Oli">
         <br>
         <button onclick="vote('oli')">Vote KP Oli</button>
-        <div class="vote-box">
-            <div id="oliBar" class="vote-fill" style="background-color:red;">0 (0%)</div>
-        </div>
+        <div class="vote-box"><div id="oliBar" class="vote-fill"></div></div>
     </div>
 
     <div class="candidate">
         <img src="gagan.jpg" alt="Gagan Thapa">
         <br>
         <button onclick="vote('gagan')">Vote Gagan Thapa</button>
-        <div class="vote-box">
-            <div id="gaganBar" class="vote-fill" style="background-color:green;">0 (0%)</div>
-        </div>
+        <div class="vote-box"><div id="gaganBar" class="vote-fill"></div></div>
     </div>
 
-    <div id="totalVotes">Total Votes: 0</div>
+    <div id="message"></div>
 </div>
 
 <audio id="balenSong" src="balen.mp3"></audio>
@@ -151,67 +190,44 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const votesRef = ref(db, "votes");
 
-// Initialize votes if not exist
-onValue(votesRef, (snapshot) => {
-    if (!snapshot.exists()) {
-        set(votesRef, {balen:0, harka:0, oli:0, gagan:0});
+function showBars(){ document.querySelectorAll(".vote-box").forEach(b=>b.style.display="block"); }
+function disableButtons(){ document.querySelectorAll("button").forEach(b=>b.disabled=true); }
+
+function updateBars(votes){
+    const total = (votes.balen||0)+(votes.harka||0)+(votes.oli||0)+(votes.gagan||0);
+    function barUpdate(id,count,color){
+        const perc = total?Math.round(count/total*100):0;
+        const bar=document.getElementById(id);
+        bar.style.width=perc+"%";
+        bar.style.background=color;
+        bar.innerText=count+" ("+perc+"%)";
     }
-    updateBars(snapshot.val() || {balen:0, harka:0, oli:0, gagan:0});
+    barUpdate("balenBar",votes.balen||0,"linear-gradient(to right,#3b82f6,#60a5fa)");
+    barUpdate("harkaBar",votes.harka||0,"linear-gradient(to right,#000000,#434343)");
+    barUpdate("oliBar",votes.oli||0,"linear-gradient(to right,#6b7280,#9ca3af)");
+    barUpdate("gaganBar",votes.gagan||0,"linear-gradient(to right,#22c55e,#4ade80)");
+    document.getElementById("totalVotes").innerText="Total Votes: "+total;
+    showBars();
+}
+
+onValue(votesRef,snapshot=>{
+    if(!snapshot.exists()){ set(votesRef,{balen:0,harka:0,oli:0,gagan:0}); }
+    updateBars(snapshot.val()||{balen:0,harka:0,oli:0,gagan:0});
 });
 
-function showBars() {
-    const boxes = document.querySelectorAll('.vote-box');
-    boxes.forEach(box => box.style.display = 'block');
-}
-
-function disableButtons() {
-    const buttons = document.querySelectorAll("button");
-    buttons.forEach(button => button.disabled = true);
-}
-
-function updateBars(votes) {
-    const total = (votes.balen||0) + (votes.harka||0) + (votes.oli||0) + (votes.gagan||0);
-
-    function updateBar(id, count) {
-        const perc = total ? Math.round(count/total*100) : 0;
-        const bar = document.getElementById(id);
-        bar.style.width = perc + "%";
-        bar.innerText = count + " (" + perc + "%)";
-    }
-
-    updateBar("balenBar", votes.balen || 0);
-    updateBar("harkaBar", votes.harka || 0);
-    updateBar("oliBar", votes.oli || 0);
-    updateBar("gaganBar", votes.gagan || 0);
-
-    document.getElementById("totalVotes").innerText = "Total Votes: " + total;
-
-    if(total >= 0){
-        showBars();
-    }
-}
-
-window.vote = function(candidate) {
+window.vote=function(candidate){
     if(localStorage.getItem("voted")){
-        alert("You have already voted!");
+        document.getElementById("message").innerText="You have already voted!";
         return;
     }
-
-    runTransaction(ref(db, 'votes/' + candidate), (current) => {
-        return (current || 0) + 1;
-    });
-
+    runTransaction(ref(db,'votes/'+candidate),current=>(current||0)+1);
     localStorage.setItem("voted","true");
-    alert("Thank you for voting!");
+    document.getElementById("message").innerText="Thank you for voting!";
     document.getElementById(candidate+"Song").play();
-
     disableButtons();
 }
 
-// Disable buttons if already voted
-if(localStorage.getItem("voted")){
-    disableButtons();
-}
+if(localStorage.getItem("voted")){ disableButtons(); }
 </script>
 
 </body>
