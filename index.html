@@ -67,21 +67,25 @@ body {
 }
 .candidate img:hover { transform:scale(1.05); }
 
+/* Buttons */
 button {
     padding:14px;
     font-size:16px;
     width:100%;
     border:none;
-    background: linear-gradient(135deg, grey, grey);
+    background: black; /* initially black */
     color:white;
     border-radius:10px;
     cursor:pointer;
     transition: transform 0.2s, background 0.3s;
     font-weight:600;
 }
-button:hover { background: linear-gradient(135deg, grey, grey); }
+button:hover { background: #333; }
 button:active { transform: scale(0.97); }
 button:disabled { background-color: grey; cursor: not-allowed; }
+
+/* Voted button */
+button.voted { background-color: green !important; }
 
 /* Vote bars */
 .vote-box {
@@ -139,28 +143,28 @@ button:disabled { background-color: grey; cursor: not-allowed; }
     <div class="candidate">
         <img src="balen.jpg" alt="Balen Shah">
         <br>
-        <button onclick="vote('balen')">Vote Balen Shah</button>
+        <button onclick="vote('balen', this)">Vote Balen Shah</button>
         <div class="vote-box"><div id="balenBar" class="vote-fill"></div></div>
     </div>
 
     <div class="candidate">
         <img src="harka.jpg" alt="Harka Sampang">
         <br>
-        <button onclick="vote('harka')">Vote Harka Sampang</button>
+        <button onclick="vote('harka', this)">Vote Harka Sampang</button>
         <div class="vote-box"><div id="harkaBar" class="vote-fill"></div></div>
     </div>
 
     <div class="candidate">
         <img src="oli.jpg" alt="KP Oli">
         <br>
-        <button onclick="vote('oli')">Vote KP Oli</button>
+        <button onclick="vote('oli', this)">Vote KP Oli</button>
         <div class="vote-box"><div id="oliBar" class="vote-fill"></div></div>
     </div>
 
     <div class="candidate">
         <img src="gagan.jpg" alt="Gagan Thapa">
         <br>
-        <button onclick="vote('gagan')">Vote Gagan Thapa</button>
+        <button onclick="vote('gagan', this)">Vote Gagan Thapa</button>
         <div class="vote-box"><div id="gaganBar" class="vote-fill"></div></div>
     </div>
 
@@ -220,44 +224,8 @@ onValue(votesRef, snapshot => {
     updateBars(snapshot.val() || {balen:0, harka:0, oli:0, gagan:0});
 });
 
-// -------------------- VOTE LOGGING FUNCTIONS --------------------
-function sendVoteLog(log) {
-    const logsRef = ref(db, "voteLogs"); // voteLogs node
-    push(logsRef, log)
-        .then(() => console.log("Vote logged:", log))
-        .catch(err => console.error("Error logging vote:", err));
-}
-
-function logVote(candidate) {
-    const voteLog = {
-        candidate: candidate,
-        time: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        location: null
-    };
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                voteLog.location = {
-                    lat: position.coords.latitude,
-                    lon: position.coords.longitude
-                };
-                sendVoteLog(voteLog);
-            },
-            error => {
-                console.warn("Geolocation not available:", error.message);
-                sendVoteLog(voteLog);
-            },
-            { enableHighAccuracy: true, timeout: 5000 }
-        );
-    } else {
-        sendVoteLog(voteLog);
-    }
-}
-
 // -------------------- VOTING FUNCTION --------------------
-window.vote = function(candidate){
+window.vote = function(candidate, btn){
     if(localStorage.getItem("voted")){
         document.getElementById("message").innerText = "You have already voted!";
         return;
@@ -269,13 +237,14 @@ window.vote = function(candidate){
             document.getElementById("message").innerText = "Thank you for voting!";
             document.getElementById(candidate + "Song").play();
 
-            // Update bars immediately
+            // Change clicked button to green
+            document.querySelectorAll("button").forEach(b => b.classList.remove("voted"));
+            btn.classList.add("voted");
+
+            // Update bars
             onValue(votesRef, snapshot => {
                 updateBars(snapshot.val() || {balen:0, harka:0, oli:0, gagan:0});
             }, { onlyOnce: true });
-
-            // LOG THE VOTE
-            logVote(candidate);
         });
 
     disableButtons();
